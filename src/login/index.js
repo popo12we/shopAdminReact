@@ -15,6 +15,19 @@ class Elform extends React.Component {
             required: true,
             message: '请输入用户名',
             trigger: 'blur'
+          },
+          {
+            validator: (rule, value, callback) => {
+              if (value === '') {
+                callback(new Error('请输入用户名'))
+                return
+              }
+              if (value.length < 3 || value.length.length > 12) {
+                callback(new Error('用户名长度为3-12位'))
+                return
+              }
+              callback()
+            }
           }
         ],
         password: [
