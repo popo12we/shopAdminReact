@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { HashRouter as Router, Route, Redirect } from 'react-router-dom'
+import 'element-theme-default'
 import Login from './login'
 class App extends React.Component {
   render() {
