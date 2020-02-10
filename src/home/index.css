@@ -1,0 +1,27 @@
+.home {
+  height: 100%;
+}
+.home .topheader {
+  height: 60px;
+  background-color: #b3c1cd;
+  color: #fff;
+  line-height: 60px;
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+}
+.home .leftnav {
+  height: 100%;
+  width: 200px;
+  float: left;
+}
+.home .leftnav .leftnavcol {
+  height: 100%;
+  background-color: #545c64;
+}
+.home .leftnav .el-menu {
+  background-color: #545c64;
+}
+.home .leftnav .el-menu-item {
+  color: #fff;
+}
