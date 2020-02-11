@@ -61,13 +61,17 @@ class ElTable extends React.Component {
         },
         {
           label: '操作',
-          render: function() {
+          render: data => {
             return (
               <span>
                 <Button type="success" size="small">
                   编辑
                 </Button>
-                <Button type="danger" size="small">
+                <Button
+                  type="danger"
+                  size="small"
+                  onClick={this.delUser.bind(this, data)}
+                >
                   删除
                 </Button>
                 <Button type="info" plain={true} size="small">
@@ -94,7 +98,6 @@ class ElTable extends React.Component {
         data: data.users,
         total: data.total
       })
-      console.log(data, meta)
     }
   }
   // 拿到子组件传递过来的 每页显示多少条
@@ -119,6 +122,14 @@ class ElTable extends React.Component {
       }
     )
   }
+  // 删除一个用户
+  async delUser(data) {
+    console.log(data.id)
+    let { meta } = await API.delete(`users/${data.id}`)
+    if (meta.status === 200) {
+      this.getTableData()
+    }
+  }
   render() {
     return (
       <div>
@@ -128,9 +139,6 @@ class ElTable extends React.Component {
           data={this.state.data}
           border={true}
           highlightCurrentRow={true}
-          onCurrentChange={item => {
-            console.log(item)
-          }}
         />
         <TablePagination
           total={this.state.total}
