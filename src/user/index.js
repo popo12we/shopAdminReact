@@ -35,6 +35,7 @@ class ElTable extends React.Component {
     this.state = {
       pagesize: 2,
       pagenum: 1,
+      total: 0,
       columns: [
         {
           label: '姓名',
@@ -89,23 +90,30 @@ class ElTable extends React.Component {
     })
     if (meta.status === 200) {
       this.setState({
-        data: data.users
+        data: data.users,
+        total: data.total
       })
-      console.log(this.state.data)
+      console.log(data, meta)
     }
   }
   render() {
     return (
-      <Table
-        style={{ width: '100%' }}
-        columns={this.state.columns}
-        data={this.state.data}
-        border={true}
-        highlightCurrentRow={true}
-        onCurrentChange={item => {
-          console.log(item)
-        }}
-      />
+      <div>
+        <Table
+          style={{ width: '100%' }}
+          columns={this.state.columns}
+          data={this.state.data}
+          border={true}
+          highlightCurrentRow={true}
+          onCurrentChange={item => {
+            console.log(item)
+          }}
+        />
+        <TablePagination
+          total={this.state.total}
+          pagenum={this.state.pagenum}
+        ></TablePagination>
+      </div>
     )
   }
 }
@@ -116,10 +124,9 @@ class TablePagination extends React.Component {
       <div className="block">
         <Pagination
           layout="total, sizes, prev, pager, next, jumper"
-          total={400}
-          pageSizes={[100, 200, 300, 400]}
-          pageSize={100}
-          currentPage={5}
+          total={this.props.total}
+          pageSizes={[2, 3, 4, 8]}
+          currentPage={this.props.pagenum}
         />
       </div>
     )
@@ -132,7 +139,6 @@ export default class User extends React.Component {
         <BoardList></BoardList>
         <SearchInput></SearchInput>
         <ElTable></ElTable>
-        <TablePagination></TablePagination>
       </div>
     )
   }
