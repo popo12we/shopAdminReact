@@ -1,6 +1,6 @@
 import React from 'react'
 import { Breadcrumb } from 'element-react'
-import { Input, Button, Table, Pagination } from 'element-react'
+import { Input, Button, Table, Pagination, Dialog, Form } from 'element-react'
 import { API } from '../utils'
 import './index.css'
 // 面包屑
@@ -14,13 +14,105 @@ class BoardList extends React.Component {
     )
   }
 }
+// 添加用户的对话框组件
+class AddDialog extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      dialogVisible2: false,
+      dialogVisible3: false,
+      form: {
+        name: '',
+        region: ''
+      }
+    }
+
+    this.table = {
+      columns: [
+        {
+          label: '日期',
+          prop: 'date',
+          width: 150
+        },
+        {
+          label: '姓名',
+          prop: 'name',
+          width: 100
+        },
+        {
+          label: '地址',
+          prop: 'address'
+        }
+      ],
+      data: [
+        {
+          date: '2016-05-02',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
+        },
+        {
+          date: '2016-05-04',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1517 弄'
+        },
+        {
+          date: '2016-05-01',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1519 弄'
+        },
+        {
+          date: '2016-05-03',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1516 弄'
+        }
+      ]
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <Dialog
+          title="收货地址"
+          visible={this.state.dialogVisible3}
+          onCancel={() => this.setState({ dialogVisible3: false })}
+        >
+          <Dialog.Body>
+            <Form model={this.state.form}>
+              <Form.Item label="活动名称" labelWidth="120">
+                <Input value={this.state.form.name}></Input>
+              </Form.Item>
+            </Form>
+          </Dialog.Body>
+
+          <Dialog.Footer className="dialog-footer">
+            <Button onClick={() => this.setState({ dialogVisible3: false })}>
+              取 消
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => this.setState({ dialogVisible3: false })}
+            >
+              确 定
+            </Button>
+          </Dialog.Footer>
+        </Dialog>
+      </div>
+    )
+  }
+}
 // 搜索框
 class SearchInput extends React.Component {
+  addUser = () => {}
   render() {
     return (
       <div className="searchInput">
         <Input placeholder="请输入内容" />
         <Button icon="search"></Button>
+        <Button type="success" onClick={this.addUser}>
+          添加用户
+        </Button>
+        <AddDialog></AddDialog>
       </div>
     )
   }
