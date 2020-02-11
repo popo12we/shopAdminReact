@@ -3,6 +3,7 @@ a {
 }
 .home {
   height: 100%;
+  background-color: #eaeef1;
 }
 .home .topheader {
   height: 60px;
