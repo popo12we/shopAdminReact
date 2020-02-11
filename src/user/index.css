@@ -14,3 +14,6 @@
 .user .searchInput .el-input {
   width: 240px;
 }
+.user .el-table {
+  border: none;
+}

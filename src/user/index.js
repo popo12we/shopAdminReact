@@ -1,6 +1,7 @@
 import React from 'react'
 import { Breadcrumb } from 'element-react'
 import { Input, Button, Table, Icon, Tag, Pagination } from 'element-react'
+import { API } from '../utils'
 import './index.css'
 // 面包屑
 class BoardList extends React.Component {
@@ -26,10 +27,14 @@ class SearchInput extends React.Component {
 }
 // 表格
 class ElTable extends React.Component {
+  componentDidMount() {
+    this.getTableData()
+  }
   constructor(props) {
     super(props)
-
     this.state = {
+      pagesize: 2,
+      pagenum: 1,
       columns: [
         {
           type: 'index'
@@ -72,67 +77,23 @@ class ElTable extends React.Component {
           }
         }
       ],
-      data: [
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        },
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          province: '上海',
-          city: '普陀区',
-          address: '上海市普陀区金沙江路 1518 弄',
-          zip: 200333
-        }
-      ]
+      data: []
     }
   }
-
+  getTableData = async () => {
+    let { data, meta } = await API.get('/users', {
+      params: {
+        pagesize: this.state.pagesize,
+        pagenum: this.state.pagenum
+      }
+    })
+    if (meta.status === 200) {
+      this.setState({
+        data: data.users
+      })
+      console.log(this.state.data)
+    }
+  }
   render() {
     return (
       <Table
