@@ -1,6 +1,6 @@
 import React from 'react'
 import { Breadcrumb } from 'element-react'
-import { Input, Button, Table, Icon, Tag, Pagination } from 'element-react'
+import { Input, Button, Table, Pagination } from 'element-react'
 import { API } from '../utils'
 import './index.css'
 // 面包屑
@@ -81,6 +81,7 @@ class ElTable extends React.Component {
       data: []
     }
   }
+  // 拿到表格数据
   getTableData = async () => {
     let { data, meta } = await API.get('/users', {
       params: {
@@ -95,6 +96,28 @@ class ElTable extends React.Component {
       })
       console.log(data, meta)
     }
+  }
+  // 拿到子组件传递过来的 每页显示多少条
+  getSizeChange = val => {
+    this.setState(
+      {
+        pagesize: val
+      },
+      () => {
+        this.getTableData()
+      }
+    )
+  }
+  // 拿到子组件传递过来的,显示当前页是哪一页
+  changeCurrent = val => {
+    this.setState(
+      {
+        pagenum: val
+      },
+      () => {
+        this.getTableData()
+      }
+    )
   }
   render() {
     return (
@@ -112,6 +135,9 @@ class ElTable extends React.Component {
         <TablePagination
           total={this.state.total}
           pagenum={this.state.pagenum}
+          pagesize={this.state.pagesize}
+          getSizeChange={this.getSizeChange}
+          changeCurrent={this.changeCurrent}
         ></TablePagination>
       </div>
     )
@@ -121,15 +147,26 @@ class ElTable extends React.Component {
 class TablePagination extends React.Component {
   render() {
     return (
-      <div className="block">
+      <div className="tablepagination">
         <Pagination
           layout="total, sizes, prev, pager, next, jumper"
           total={this.props.total}
-          pageSizes={[2, 3, 4, 8]}
+          pageSizes={[2, 4, 6, 8]}
+          onCurrentChange={this.changeCurrent}
           currentPage={this.props.pagenum}
+          onSizeChange={this.changeSize}
+          pageSize={this.props.pagesize}
         />
       </div>
     )
+  }
+  // 改变每页显示条数
+  changeSize = val => {
+    this.props.getSizeChange(val)
+  }
+  // 改变当前页
+  changeCurrent = val => {
+    this.props.changeCurrent(val)
   }
 }
 export default class User extends React.Component {

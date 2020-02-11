@@ -1,5 +1,5 @@
 .user {
-  overflow: hidden;
+  margin-left: 200px;
   padding: 20px;
 }
 .user .el-breadcrumb {
@@ -16,4 +16,7 @@
 }
 .user .el-table {
   border: none;
+}
+.user .tablepagination {
+  margin: 15px 0;
 }
