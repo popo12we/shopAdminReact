@@ -37,40 +37,40 @@ class ElTable extends React.Component {
       pagenum: 1,
       columns: [
         {
-          type: 'index'
-        },
-        {
-          label: '日期',
-          prop: 'date',
-          width: 150,
+          label: '姓名',
           render: function(data) {
             return (
               <span>
-                <Icon name="time" />
-                <span style={{ marginLeft: '10px' }}>{data.date}</span>
+                <span style={{ marginLeft: '10px' }}>{data.username}</span>
               </span>
             )
           }
         },
         {
-          label: '姓名',
-          prop: 'name',
-          width: 160,
+          label: '邮箱',
           render: function(data) {
-            return <Tag>{data.name}</Tag>
+            return <span>{data.email}</span>
+          }
+        },
+        {
+          label: '电话',
+          render: function(data) {
+            return <span>{data.mobile}</span>
           }
         },
         {
           label: '操作',
-          prop: 'address',
           render: function() {
             return (
               <span>
-                <Button plain={true} type="info" size="small">
+                <Button type="success" size="small">
                   编辑
                 </Button>
                 <Button type="danger" size="small">
                   删除
+                </Button>
+                <Button type="info" plain={true} size="small">
+                  分配
                 </Button>
               </span>
             )
