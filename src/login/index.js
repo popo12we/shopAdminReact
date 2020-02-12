@@ -1,7 +1,7 @@
 import React from 'react'
 import { Form, Input, Button } from 'element-react'
 import Axios from 'axios'
-import './index.css'
+import styles from './index.module.scss'
 class Elform extends React.Component {
   constructor(props) {
     super(props)
@@ -115,9 +115,9 @@ class Elform extends React.Component {
 export default class Login extends React.Component {
   render() {
     return (
-      <div className="login">
+      <div className={styles.login}>
         {/* 表单 */}
-        <div className="form">
+        <div className={styles.form}>
           <Elform history={this.props.history}></Elform>
         </div>
       </div>

@@ -2,6 +2,7 @@ import React from 'react'
 import { Breadcrumb } from 'element-react'
 import { Input, Button, Table, Pagination, Dialog, Form } from 'element-react'
 import { API } from '../utils'
+import styles from './index.module.scss'
 import './index.css'
 // 面包屑
 class BoardList extends React.Component {
@@ -19,80 +20,53 @@ class AddDialog extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      dialogVisible2: false,
-      dialogVisible3: false,
+      dialogVisible: this.props.show,
       form: {
-        name: '',
-        region: ''
+        username: '',
+        password: '',
+        mobile: '',
+        email: ''
       }
     }
-
-    this.table = {
-      columns: [
-        {
-          label: '日期',
-          prop: 'date',
-          width: 150
-        },
-        {
-          label: '姓名',
-          prop: 'name',
-          width: 100
-        },
-        {
-          label: '地址',
-          prop: 'address'
-        }
-      ],
-      data: [
-        {
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-        {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        },
-        {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        },
-        {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
-        }
-      ]
-    }
   }
-
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      dialogVisible: nextProps.show
+    })
+  }
+  addUserTure() {
+    // alert(12)
+  }
   render() {
     return (
-      <div>
+      <div className="addDialog">
         <Dialog
-          title="收货地址"
-          visible={this.state.dialogVisible3}
-          onCancel={() => this.setState({ dialogVisible3: false })}
+          title="添加用户"
+          visible={this.state.dialogVisible}
+          onCancel={() => this.setState({ dialogVisible: false })}
         >
           <Dialog.Body>
             <Form model={this.state.form}>
-              <Form.Item label="活动名称" labelWidth="120">
-                <Input value={this.state.form.name}></Input>
+              <Form.Item label="用户名">
+                <Input value={this.state.form.username}></Input>
+              </Form.Item>
+              <Form.Item label="密码">
+                <Input value={this.state.form.password}></Input>
+              </Form.Item>
+              <Form.Item label="邮箱">
+                <Input value={this.state.form.email}></Input>
+              </Form.Item>
+              <Form.Item label="手机">
+                <Input value={this.state.form.mobile}></Input>
               </Form.Item>
             </Form>
           </Dialog.Body>
 
           <Dialog.Footer className="dialog-footer">
-            <Button onClick={() => this.setState({ dialogVisible3: false })}>
+            <Button onClick={() => this.setState({ dialogVisible: false })}>
               取 消
             </Button>
-            <Button
-              type="primary"
-              onClick={() => this.setState({ dialogVisible3: false })}
-            >
+            <Button type="primary" onClick={this.addUserTure}>
               确 定
             </Button>
           </Dialog.Footer>
@@ -103,7 +77,15 @@ class AddDialog extends React.Component {
 }
 // 搜索框
 class SearchInput extends React.Component {
-  addUser = () => {}
+  state = {
+    // 传递给子组件的数据 通知子组件是展示还是隐藏
+    show: false
+  }
+  addUser = () => {
+    this.setState({
+      show: true
+    })
+  }
   render() {
     return (
       <div className="searchInput">
@@ -112,7 +94,7 @@ class SearchInput extends React.Component {
         <Button type="success" onClick={this.addUser}>
           添加用户
         </Button>
-        <AddDialog></AddDialog>
+        <AddDialog show={this.state.show}></AddDialog>
       </div>
     )
   }
@@ -216,7 +198,6 @@ class ElTable extends React.Component {
   }
   // 删除一个用户
   async delUser(data) {
-    console.log(data.id)
     let { meta } = await API.delete(`users/${data.id}`)
     if (meta.status === 200) {
       this.getTableData()
@@ -247,7 +228,7 @@ class ElTable extends React.Component {
 class TablePagination extends React.Component {
   render() {
     return (
-      <div className="tablepagination">
+      <div className={styles.tablepagination}>
         <Pagination
           layout="total, sizes, prev, pager, next, jumper"
           total={this.props.total}
@@ -269,10 +250,11 @@ class TablePagination extends React.Component {
     this.props.changeCurrent(val)
   }
 }
+// user组件
 export default class User extends React.Component {
   render() {
     return (
-      <div className="user">
+      <div className={styles.user}>
         <BoardList></BoardList>
         <SearchInput></SearchInput>
         <ElTable></ElTable>

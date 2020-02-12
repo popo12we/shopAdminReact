@@ -2,19 +2,21 @@ import React from 'react'
 import { Layout, Menu } from 'element-react'
 import { Route, Link } from 'react-router-dom'
 import User from '../user'
+import styles from './index.module.scss'
 import './index.css'
+console.log(styles)
 // 顶部
 class TopHeader extends React.Component {
   render() {
-    return <div className="topheader">电商后台管理系统</div>
+    return <div className={styles.topheader}>电商后台管理系统</div>
   }
 }
 // 左侧
 class LeftNav extends React.Component {
   render() {
     return (
-      <Layout.Row className="leftnav">
-        <Layout.Col className="leftnavcol">
+      <Layout.Row className={styles.leftnav}>
+        <Layout.Col className={styles.leftnavcol}>
           <Menu
             defaultActive="2"
             className="el-menu-vertical-demo"
@@ -121,7 +123,7 @@ class LeftNav extends React.Component {
 export default class Home extends React.Component {
   render() {
     return (
-      <div className="home">
+      <div className={styles.home}>
         <TopHeader></TopHeader>
         <LeftNav></LeftNav>
         <Route path="/home/user" component={User} class="content" />
