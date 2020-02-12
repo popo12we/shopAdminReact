@@ -7,13 +7,3 @@
 .el-table {
   border: none;
 }
-.searchInput {
-  margin: 15px 0;
-}
-.searchInput .el-input {
-  width: 240px !important;
-}
-.searchInput .addDialog .el-input {
-  float: right;
-  width: 85% !important;
-}

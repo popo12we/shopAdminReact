@@ -21,11 +21,53 @@ class AddDialog extends React.Component {
     super(props)
     this.state = {
       dialogVisible: this.props.show,
-      form: {
+      addForm: {
         username: '',
         password: '',
         mobile: '',
         email: ''
+      },
+      rules: {
+        username: [
+          {
+            required: true,
+            message: '请输入用户名',
+            trigger: 'blur'
+          },
+          {
+            validator: (rule, value, callback) => {
+              if (value === '') {
+                callback(new Error('请输入用户名'))
+                return
+              }
+              if (value.length < 3 || value.length.length > 12) {
+                callback(new Error('用户名长度为3-12位'))
+                return
+              }
+              callback()
+            }
+          }
+        ],
+        password: [
+          {
+            required: true,
+            message: '请输入密码',
+            trigger: 'blur'
+          },
+          {
+            validator: (rule, value, callback) => {
+              if (value === '') {
+                callback(new Error('请输入密码'))
+                return
+              }
+              if (value.length < 6 || value.length.length > 12) {
+                callback(new Error('密码长度为6-12位'))
+                return
+              }
+              callback()
+            }
+          }
+        ]
       }
     }
   }
@@ -34,8 +76,32 @@ class AddDialog extends React.Component {
       dialogVisible: nextProps.show
     })
   }
-  addUserTure() {
-    // alert(12)
+  handleSubmit(e) {
+    console.log(this)
+    e.preventDefault()
+    this.refs.addForm.validate(async valid => {
+      if (valid) {
+        // let res = await Axios.post(
+        //   'http://localhost:8888/api/private/v1/login',
+        //   {
+        //     username: this.state.form.username,
+        //     password: this.state.form.password
+        //   }
+        // )
+        // if (res.data.meta.status === 200) {
+        //   this.props.history.push('/home')
+        //   localStorage.setItem('token', res.data.data.token)
+        // }
+      } else {
+        return false
+      }
+    })
+  }
+  onChange(key, value) {
+    console.log(key, value)
+    this.setState({
+      addForm: Object.assign({}, this.state.addForm, { [key]: value })
+    })
   }
   render() {
     return (
@@ -46,27 +112,43 @@ class AddDialog extends React.Component {
           onCancel={() => this.setState({ dialogVisible: false })}
         >
           <Dialog.Body>
-            <Form model={this.state.form}>
+            <Form
+              model={this.state.addForm}
+              ref="addForm"
+              rules={this.state.rules}
+              labelWidth="80"
+            >
               <Form.Item label="用户名">
-                <Input value={this.state.form.username}></Input>
+                <Input
+                  value={this.state.addForm.username}
+                  onChange={this.onChange.bind(this, 'username')}
+                ></Input>
               </Form.Item>
               <Form.Item label="密码">
-                <Input value={this.state.form.password}></Input>
+                <Input
+                  value={this.state.addForm.password}
+                  onChange={this.onChange.bind(this, 'password')}
+                ></Input>
               </Form.Item>
               <Form.Item label="邮箱">
-                <Input value={this.state.form.email}></Input>
+                <Input
+                  value={this.state.addForm.email}
+                  onChange={this.onChange.bind(this, 'email')}
+                ></Input>
               </Form.Item>
               <Form.Item label="手机">
-                <Input value={this.state.form.mobile}></Input>
+                <Input
+                  value={this.state.addForm.mobile}
+                  onChange={this.onChange.bind(this, 'mobile')}
+                ></Input>
               </Form.Item>
             </Form>
           </Dialog.Body>
-
           <Dialog.Footer className="dialog-footer">
             <Button onClick={() => this.setState({ dialogVisible: false })}>
               取 消
             </Button>
-            <Button type="primary" onClick={this.addUserTure}>
+            <Button type="primary" onClick={this.handleSubmit.bind(this)}>
               确 定
             </Button>
           </Dialog.Footer>
@@ -88,8 +170,8 @@ class SearchInput extends React.Component {
   }
   render() {
     return (
-      <div className="searchInput">
-        <Input placeholder="请输入内容" />
+      <div className={styles.searchInput}>
+        <Input placeholder="请输入内容" style={{ width: '240px' }} />
         <Button icon="search"></Button>
         <Button type="success" onClick={this.addUser}>
           添加用户
