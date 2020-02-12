@@ -77,29 +77,28 @@ class AddDialog extends React.Component {
     })
   }
   handleSubmit(e) {
-    // console.log(this)
     e.preventDefault()
-    console.log(this.refs.addForm)
     this.refs.addForm.validate(async valid => {
       if (valid) {
-        // let res = await Axios.post(
-        //   'http://localhost:8888/api/private/v1/login',
-        //   {
-        //     username: this.state.form.username,
-        //     password: this.state.form.password
-        //   }
-        // )
-        // if (res.data.meta.status === 200) {
-        //   this.props.history.push('/home')
-        //   localStorage.setItem('token', res.data.data.token)
-        // }
+        let { meta } = await API.post('users', {
+          username: this.state.addForm.username,
+          password: this.state.addForm.password,
+          email: this.state.addForm.email,
+          mobile: this.state.addForm.mobile
+        })
+        if (meta.status === 201) {
+          this.setState({
+            dialogVisible: false
+          })
+          this.props.changeShowFalse(false)
+          this.props.table.getTableData()
+        }
       } else {
         return false
       }
     })
   }
   onChange(key, value) {
-    console.log(key, value)
     this.setState({
       addForm: Object.assign({}, this.state.addForm, { [key]: value })
     })
@@ -169,6 +168,12 @@ class SearchInput extends React.Component {
       show: true
     })
   }
+  // 模态框点击确定得到子组件传递过来的数据关掉模态框
+  changeShowFalse = flag => {
+    this.setState({
+      show: false
+    })
+  }
   render() {
     return (
       <div className={styles.searchInput}>
@@ -177,7 +182,11 @@ class SearchInput extends React.Component {
         <Button type="success" onClick={this.addUser}>
           添加用户
         </Button>
-        <AddDialog show={this.state.show}></AddDialog>
+        <AddDialog
+          show={this.state.show}
+          table={this.props.table}
+          changeShowFalse={this.changeShowFalse}
+        ></AddDialog>
       </div>
     )
   }
@@ -186,6 +195,7 @@ class SearchInput extends React.Component {
 class ElTable extends React.Component {
   componentDidMount() {
     this.getTableData()
+    this.props.onRef(this)
   }
   constructor(props) {
     super(props)
@@ -335,12 +345,20 @@ class TablePagination extends React.Component {
 }
 // user组件
 export default class User extends React.Component {
+  state = {
+    table: ''
+  }
+  onRef = data => {
+    this.setState({
+      table: data
+    })
+  }
   render() {
     return (
       <div className={styles.user}>
         <BoardList></BoardList>
-        <SearchInput></SearchInput>
-        <ElTable></ElTable>
+        <SearchInput table={this.state.table}></SearchInput>
+        <ElTable onRef={this.onRef}></ElTable>
       </div>
     )
   }
