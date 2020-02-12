@@ -77,8 +77,9 @@ class AddDialog extends React.Component {
     })
   }
   handleSubmit(e) {
-    console.log(this)
+    // console.log(this)
     e.preventDefault()
+    console.log(this.refs.addForm)
     this.refs.addForm.validate(async valid => {
       if (valid) {
         // let res = await Axios.post(
@@ -118,25 +119,25 @@ class AddDialog extends React.Component {
               rules={this.state.rules}
               labelWidth="80"
             >
-              <Form.Item label="用户名">
+              <Form.Item label="用户名" prop="username">
                 <Input
                   value={this.state.addForm.username}
                   onChange={this.onChange.bind(this, 'username')}
                 ></Input>
               </Form.Item>
-              <Form.Item label="密码">
+              <Form.Item label="密码" prop="password">
                 <Input
                   value={this.state.addForm.password}
                   onChange={this.onChange.bind(this, 'password')}
                 ></Input>
               </Form.Item>
-              <Form.Item label="邮箱">
+              <Form.Item label="邮箱" prop="email">
                 <Input
                   value={this.state.addForm.email}
                   onChange={this.onChange.bind(this, 'email')}
                 ></Input>
               </Form.Item>
-              <Form.Item label="手机">
+              <Form.Item label="手机" prop="mobile">
                 <Input
                   value={this.state.addForm.mobile}
                   onChange={this.onChange.bind(this, 'mobile')}
