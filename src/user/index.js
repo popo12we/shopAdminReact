@@ -1,6 +1,14 @@
 import React from 'react'
 import { Breadcrumb } from 'element-react'
-import { Input, Button, Table, Pagination, Dialog, Form } from 'element-react'
+import {
+  Input,
+  Button,
+  Table,
+  Pagination,
+  Dialog,
+  Form,
+  Select
+} from 'element-react'
 import { API } from '../utils'
 import styles from './index.module.scss'
 import './index.css'
@@ -19,18 +27,29 @@ class BoardList extends React.Component {
 class AssignDialog extends React.Component {
   constructor(props) {
     super(props)
-    console.log(this.props)
     this.state = {
       assigndialogVisible: this.props.show,
-      assignForm: {
-        username: ''
-      }
+      assignForm: {},
+      // 下拉框假数据
+      roles: [],
+      value: ''
     }
+  }
+  componentDidMount() {
+    this.getSelectData()
   }
   componentWillReceiveProps(nextProps) {
     this.setState({
-      dialogVisible: nextProps.show
+      assigndialogVisible: nextProps.show
     })
+  }
+  getSelectData = async () => {
+    let { data, meta } = await API.get('roles')
+    if (meta.status === 200) {
+      this.setState({
+        roles: data
+      })
+    }
   }
   handleSubmit(e) {
     e.preventDefault()
@@ -45,12 +64,25 @@ class AssignDialog extends React.Component {
         >
           <Dialog.Body>
             <Form model={this.state.assignForm} labelWidth="80">
-              <Form.Item label="用户名" prop="username">
+              <Form.Item label="用户名">
                 <Input
-                  value={this.state.assignForm.username}
+                  value={this.props.username}
                   disabled
                   style={{ width: '60px' }}
                 ></Input>
+              </Form.Item>
+              <Form.Item label="角色列表">
+                <Select value={this.state.value} placeholder="请选择">
+                  {this.state.roles.map(el => {
+                    return (
+                      <Select.Option
+                        key={el.id}
+                        label={el.roleName}
+                        value={el.id}
+                      />
+                    )
+                  })}
+                </Select>
               </Form.Item>
             </Form>
           </Dialog.Body>
@@ -254,10 +286,11 @@ class ElTable extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      show: true,
+      show: false,
       pagesize: 2,
       pagenum: 1,
       total: 0,
+      username: '',
       columns: [
         {
           label: '姓名',
@@ -296,7 +329,7 @@ class ElTable extends React.Component {
                 >
                   删除
                 </Button>
-                <Button type="info" plain={true} size="small">
+                <Button onClick={this.showAssignDialog.bind(this, data)}>
                   分配
                 </Button>
               </span>
@@ -351,8 +384,15 @@ class ElTable extends React.Component {
       this.getTableData()
     }
   }
+  // 点击打开分配角色对话框
+  showAssignDialog(data) {
+    console.log(data)
+    this.setState({
+      show: true,
+      username: data.username
+    })
+  }
   render() {
-    console.log(this.state)
     return (
       <div className="elTable">
         <Table
@@ -362,7 +402,10 @@ class ElTable extends React.Component {
           border={true}
           highlightCurrentRow={true}
         />
-        <AssignDialog show={this.state.show}></AssignDialog>
+        <AssignDialog
+          show={this.state.show}
+          username={this.state.username}
+        ></AssignDialog>
         <TablePagination
           total={this.state.total}
           pagenum={this.state.pagenum}
