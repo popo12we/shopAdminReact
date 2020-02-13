@@ -32,7 +32,7 @@ class AssignDialog extends React.Component {
       assignForm: {},
       // 下拉框假数据
       roles: [],
-      value: ''
+      value: this.props.rolename
     }
   }
   componentDidMount() {
@@ -40,7 +40,8 @@ class AssignDialog extends React.Component {
   }
   componentWillReceiveProps(nextProps) {
     this.setState({
-      assigndialogVisible: nextProps.show
+      assigndialogVisible: nextProps.show,
+      value: nextProps.rolename
     })
   }
   getSelectData = async () => {
@@ -291,6 +292,7 @@ class ElTable extends React.Component {
       pagenum: 1,
       total: 0,
       username: '',
+      rolename: '',
       columns: [
         {
           label: '姓名',
@@ -387,13 +389,26 @@ class ElTable extends React.Component {
       this.getTableData()
     }
   }
+  //根据ID查roleId
+  async getRoleId(role) {
+    let { data, meta } = await API.get(`users/${role.id}`)
+    if (meta.status === 200) {
+      this.setState({
+        show: true,
+        username: role.username,
+        rolename: data.rid
+      })
+    }
+  }
   // 点击打开分配角色对话框
   showAssignDialog(data) {
-    console.log(data)
-    this.setState({
-      show: true,
-      username: data.username
-    })
+    this.getRoleId(data)
+  }
+  async getUser(data) {
+    let { meta } = await API.get(`users/${data.id}`)
+    if (meta.status === 200) {
+      this.getTableData()
+    }
   }
   // 取消分配模态框的显示
   closeShow = () => {
@@ -414,6 +429,7 @@ class ElTable extends React.Component {
         <AssignDialog
           show={this.state.show}
           username={this.state.username}
+          rolename={this.state.rolename}
         ></AssignDialog>
         <TablePagination
           total={this.state.total}
