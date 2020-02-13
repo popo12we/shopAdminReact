@@ -329,7 +329,10 @@ class ElTable extends React.Component {
                 >
                   删除
                 </Button>
-                <Button onClick={this.showAssignDialog.bind(this, data)}>
+                <Button
+                  size="small"
+                  onClick={this.showAssignDialog.bind(this, data)}
+                >
                   分配
                 </Button>
               </span>
@@ -392,6 +395,12 @@ class ElTable extends React.Component {
       username: data.username
     })
   }
+  // 取消分配模态框的显示
+  closeShow = () => {
+    this.setState({
+      show: false
+    })
+  }
   render() {
     return (
       <div className="elTable">
@@ -412,6 +421,7 @@ class ElTable extends React.Component {
           pagesize={this.state.pagesize}
           getSizeChange={this.getSizeChange}
           changeCurrent={this.changeCurrent}
+          closeShow={this.closeShow}
         ></TablePagination>
       </div>
     )
@@ -437,10 +447,12 @@ class TablePagination extends React.Component {
   // 改变每页显示条数
   changeSize = val => {
     this.props.getSizeChange(val)
+    this.props.closeShow()
   }
   // 改变当前页
   changeCurrent = val => {
     this.props.changeCurrent(val)
+    this.props.closeShow()
   }
 }
 // user组件
