@@ -1,6 +1,7 @@
 import React from 'react'
-import { Breadcrumb, Form, Table } from 'element-react'
+import { Breadcrumb, Form, Table, Button } from 'element-react'
 import styles from './index.module.scss'
+import { API } from '../utils'
 // 面包屑
 class BoardList extends React.Component {
   render() {
@@ -14,9 +15,20 @@ class BoardList extends React.Component {
 }
 // 表格
 class RolesTable extends React.Component {
+  componentDidMount() {
+    this.getRolesTableData()
+  }
+  // 拿到表格数据
+  getRolesTableData = async () => {
+    let { data, meta } = await API.get('roles')
+    if (meta.status === 200) {
+      this.setState({
+        data: data
+      })
+    }
+  }
   constructor(props) {
     super(props)
-
     this.state = {
       columns: [
         {
@@ -54,18 +66,25 @@ class RolesTable extends React.Component {
           }
         },
         {
-          label: '商品 ID',
-          prop: 'id',
-          width: 150
-        },
-        {
-          label: '商品名称',
-          prop: 'name',
-          width: 160
+          label: '角色名称',
+          prop: 'roleName'
         },
         {
           label: '描述',
-          prop: 'desc'
+          prop: 'roleDesc'
+        },
+        {
+          label: '操作',
+          render: data => {
+            return (
+              <span>
+                <Button plain icon="delete" type="warning" size="mini"></Button>
+                <Button type="success" size="mini">
+                  分配权限
+                </Button>
+              </span>
+            )
+          }
         }
       ],
       data: [
