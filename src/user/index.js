@@ -32,7 +32,9 @@ class AssignDialog extends React.Component {
       assignForm: {},
       // 下拉框假数据
       roles: [],
-      value: this.props.rolename
+      value: this.props.roleid,
+      id: this.props.id,
+      username: this.props.username
     }
   }
   componentDidMount() {
@@ -41,9 +43,12 @@ class AssignDialog extends React.Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
       assigndialogVisible: nextProps.show,
-      value: nextProps.rolename
+      value: nextProps.roleid,
+      id: nextProps.id,
+      username: nextProps.username
     })
   }
+  // 拿到下拉框的数据
   getSelectData = async () => {
     let { data, meta } = await API.get('roles')
     if (meta.status === 200) {
@@ -52,8 +57,25 @@ class AssignDialog extends React.Component {
       })
     }
   }
-  handleSubmit(e) {
-    e.preventDefault()
+  // 改变select值
+  changeSelect = value => {
+    this.setState({
+      value: value
+    })
+  }
+  // 点击分配重新分配角色
+  async handleSubmit() {
+    let { meta } = await API.put(`users/${this.state.id}/role`, {
+      id: this.state.id,
+      username: this.state.username,
+      rid: this.state.value
+    })
+    if (meta.status === 200) {
+      this.setState({
+        assigndialogVisible: false
+      })
+      this.props.closeShow()
+    }
   }
   render() {
     return (
@@ -73,7 +95,11 @@ class AssignDialog extends React.Component {
                 ></Input>
               </Form.Item>
               <Form.Item label="角色列表">
-                <Select value={this.state.value} placeholder="请选择">
+                <Select
+                  onChange={this.changeSelect}
+                  value={this.state.value}
+                  placeholder="请选择"
+                >
                   {this.state.roles.map(el => {
                     return (
                       <Select.Option
@@ -292,7 +318,9 @@ class ElTable extends React.Component {
       pagenum: 1,
       total: 0,
       username: '',
+      roleid: '',
       rolename: '',
+      id: '',
       columns: [
         {
           label: '姓名',
@@ -396,7 +424,8 @@ class ElTable extends React.Component {
       this.setState({
         show: true,
         username: role.username,
-        rolename: data.rid
+        roleid: data.rid,
+        id: data.id
       })
     }
   }
@@ -429,7 +458,10 @@ class ElTable extends React.Component {
         <AssignDialog
           show={this.state.show}
           username={this.state.username}
-          rolename={this.state.rolename}
+          roleid={this.state.roleid}
+          rolename={this.state.username}
+          id={this.state.id}
+          closeShow={this.closeShow}
         ></AssignDialog>
         <TablePagination
           total={this.state.total}
