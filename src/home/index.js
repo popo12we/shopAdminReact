@@ -2,9 +2,9 @@ import React from 'react'
 import { Layout, Menu } from 'element-react'
 import { Route, Link } from 'react-router-dom'
 import User from '../user'
+import Roles from '../roles'
 import styles from './index.module.scss'
 import './index.css'
-console.log(styles)
 // 顶部
 class TopHeader extends React.Component {
   render() {
@@ -52,7 +52,9 @@ class LeftNav extends React.Component {
                 </span>
               }
             >
-              <Menu.Item index="2-1">角色列表</Menu.Item>
+              <Link to="/home/roles">
+                <Menu.Item index="2-1">角色列表</Menu.Item>
+              </Link>
               <Menu.Item index="2-2">权限列表</Menu.Item>
             </Menu.SubMenu>
           </Menu>
@@ -127,6 +129,7 @@ export default class Home extends React.Component {
         <TopHeader></TopHeader>
         <LeftNav></LeftNav>
         <Route path="/home/user" component={User} class="content" />
+        <Route path="/home/roles" component={Roles} class="content" />
       </div>
     )
   }
