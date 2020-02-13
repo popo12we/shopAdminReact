@@ -1,5 +1,5 @@
 import React from 'react'
-import { Breadcrumb, Form, Table, Button } from 'element-react'
+import { Breadcrumb, Table, Button, Tag } from 'element-react'
 import styles from './index.module.scss'
 import { API } from '../utils'
 // 面包屑
@@ -32,36 +32,60 @@ class RolesTable extends React.Component {
     this.state = {
       columns: [
         {
+          type: 'index'
+        },
+        {
           type: 'expand',
           expandPannel: function(data) {
+            console.log(data)
             return (
-              <Form
-                labelPosition="left"
-                inline={true}
-                className="demo-table-expand"
-              >
-                <Form.Item label="商品名称">
-                  <span>好滋好味鸡蛋仔</span>
-                </Form.Item>
-                <Form.Item label="所属店铺">
-                  <span>王小虎夫妻店</span>
-                </Form.Item>
-                <Form.Item label="商品 ID">
-                  <span>12987122</span>
-                </Form.Item>
-                <Form.Item label="店铺 ID">
-                  <span>10333</span>
-                </Form.Item>
-                <Form.Item label="商品分类">
-                  <span>江浙小吃、小吃零食</span>
-                </Form.Item>
-                <Form.Item label="店铺地址">
-                  <span>上海市普陀区真北路</span>
-                </Form.Item>
-                <Form.Item label="商品描述">
-                  <span>荷兰优质淡奶，奶香浓而不腻</span>
-                </Form.Item>
-              </Form>
+              <div className="expandpannel">
+                <div className={styles.expandpannerFirst}>
+                  {data.children.map(item => {
+                    return (
+                      <Tag
+                        type="primary"
+                        key={item.id}
+                        style={{ marginBottom: '5px' }}
+                      >
+                        {item.authName}
+                      </Tag>
+                    )
+                  })}
+                </div>
+                <div className={styles.expandpannerSecond}>
+                  {data.children.map(item1 => {
+                    return item1.children.map(item2 => {
+                      return (
+                        <Tag
+                          type="success"
+                          key={item2.id}
+                          style={{ marginBottom: '5px' }}
+                        >
+                          {item2.authName}
+                        </Tag>
+                      )
+                    })
+                  })}
+                </div>
+                <div className={styles.expandpannerThird}>
+                  {data.children.map(item1 => {
+                    return item1.children.map(item2 => {
+                      return item2.children.map(item3 => {
+                        return (
+                          <Tag
+                            type="warning"
+                            key={item3.id}
+                            style={{ margin: '5px' }}
+                          >
+                            {item3.authName}
+                          </Tag>
+                        )
+                      })
+                    })
+                  })}
+                </div>
+              </div>
             )
           }
         },
