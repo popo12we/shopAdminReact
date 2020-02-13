@@ -15,60 +15,15 @@ class BoardList extends React.Component {
     )
   }
 }
-// 添加用户的对话框组件
+// 分配用户的对话框组件
 class AssignDialog extends React.Component {
   constructor(props) {
     super(props)
     console.log(this.props)
     this.state = {
       assigndialogVisible: this.props.show,
-      addForm: {
-        username: '',
-        password: '',
-        mobile: '',
-        email: ''
-      },
-      rules: {
-        username: [
-          {
-            required: true,
-            message: '请输入用户名',
-            trigger: 'blur'
-          },
-          {
-            validator: (rule, value, callback) => {
-              if (value === '') {
-                callback(new Error('请输入用户名'))
-                return
-              }
-              if (value.length < 3 || value.length.length > 12) {
-                callback(new Error('用户名长度为3-12位'))
-                return
-              }
-              callback()
-            }
-          }
-        ],
-        password: [
-          {
-            required: true,
-            message: '请输入密码',
-            trigger: 'blur'
-          },
-          {
-            validator: (rule, value, callback) => {
-              if (value === '') {
-                callback(new Error('请输入密码'))
-                return
-              }
-              if (value.length < 6 || value.length.length > 12) {
-                callback(new Error('密码长度为6-12位'))
-                return
-              }
-              callback()
-            }
-          }
-        ]
+      assignForm: {
+        username: ''
       }
     }
   }
@@ -79,30 +34,6 @@ class AssignDialog extends React.Component {
   }
   handleSubmit(e) {
     e.preventDefault()
-    this.refs.addForm.validate(async valid => {
-      if (valid) {
-        let { meta } = await API.post('users', {
-          username: this.state.addForm.username,
-          password: this.state.addForm.password,
-          email: this.state.addForm.email,
-          mobile: this.state.addForm.mobile
-        })
-        if (meta.status === 201) {
-          this.setState({
-            dialogVisible: false
-          })
-          this.props.changeShowFalse(false)
-          this.props.table.getTableData()
-        }
-      } else {
-        return false
-      }
-    })
-  }
-  onChange(key, value) {
-    this.setState({
-      addForm: Object.assign({}, this.state.addForm, { [key]: value })
-    })
   }
   render() {
     return (
@@ -113,16 +44,12 @@ class AssignDialog extends React.Component {
           onCancel={() => this.setState({ assigndialogVisible: false })}
         >
           <Dialog.Body>
-            <Form
-              model={this.state.addForm}
-              ref="addForm"
-              rules={this.state.rules}
-              labelWidth="80"
-            >
+            <Form model={this.state.assignForm} labelWidth="80">
               <Form.Item label="用户名" prop="username">
                 <Input
-                  value={this.state.addForm.username}
-                  onChange={this.onChange.bind(this, 'username')}
+                  value={this.state.assignForm.username}
+                  disabled
+                  style={{ width: '60px' }}
                 ></Input>
               </Form.Item>
             </Form>
@@ -134,7 +61,7 @@ class AssignDialog extends React.Component {
               取 消
             </Button>
             <Button type="primary" onClick={this.handleSubmit.bind(this)}>
-              确 定
+              分 配
             </Button>
           </Dialog.Footer>
         </Dialog>
