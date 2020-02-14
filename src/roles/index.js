@@ -15,6 +15,9 @@ class BoardList extends React.Component {
 }
 // 表格
 class RolesTable extends React.Component {
+  state = {
+    show: false
+  }
   componentDidMount() {
     this.getRolesTableData()
   }
@@ -27,6 +30,14 @@ class RolesTable extends React.Component {
       })
     }
   }
+
+  // 点击分配权限显示对话框
+  showDialog = () => {
+    this.setState({
+      show: true
+    })
+  }
+
   constructor(props) {
     super(props)
     this.state = {
@@ -103,7 +114,7 @@ class RolesTable extends React.Component {
             return (
               <span>
                 <Button plain icon="delete" type="warning" size="mini"></Button>
-                <Button type="success" size="mini">
+                <Button type="success" size="mini" onClick={this.showDialog}>
                   分配权限
                 </Button>
               </span>
@@ -117,17 +128,14 @@ class RolesTable extends React.Component {
 
   render() {
     return (
-      <div class="rolesTable">
+      <div className="rolesTable">
         <Table
           style={{ width: '100%' }}
           columns={this.state.columns}
           data={this.state.data}
           border={false}
-          onCurrentChange={item => {
-            console.log(item)
-          }}
         />
-        <RolesTree></RolesTree>
+        <RolesTree show={this.state.show}></RolesTree>
       </div>
     )
   }
@@ -135,61 +143,20 @@ class RolesTable extends React.Component {
 
 // 树状图
 class RolesTree extends React.Component {
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      dialogVisible: nextProps.show
+    })
+  }
+  componentDidMount() {
+    this.getAssginJurisdictionData()
+  }
   constructor(props) {
     super(props)
 
     this.state = {
-      dialogVisible: true,
-      data: [
-        {
-          id: 1,
-          label: '一级 1',
-          children: [
-            {
-              id: 4,
-              label: '二级 1-1',
-              children: [
-                {
-                  id: 9,
-                  label: '三级 1-1-1'
-                },
-                {
-                  id: 10,
-                  label: '三级 1-1-2'
-                }
-              ]
-            }
-          ]
-        },
-        {
-          id: 2,
-          label: '一级 2',
-          children: [
-            {
-              id: 5,
-              label: '二级 2-1'
-            },
-            {
-              id: 6,
-              label: '二级 2-2'
-            }
-          ]
-        },
-        {
-          id: 3,
-          label: '一级 3',
-          children: [
-            {
-              id: 7,
-              label: '二级 3-1'
-            },
-            {
-              id: 8,
-              label: '二级 3-2'
-            }
-          ]
-        }
-      ],
+      dialogVisible: this.props.show,
+      data: [],
       options: {
         children: 'children',
         label: 'label'
@@ -197,11 +164,29 @@ class RolesTree extends React.Component {
     }
   }
 
+  // 拿到树形结构数据
+  getAssginJurisdictionData = async () => {
+    let { data, meta } = await API.get('rights/tree')
+    if (meta.status === 200) {
+      data.forEach(item1 => {
+        item1.label = item1.authName
+        item1.children.forEach(item2 => {
+          item2.label = item2.authName
+          item2.children.forEach(item3 => {
+            item3.label = item3.authName
+          })
+        })
+      })
+      this.setState({
+        data: data
+      })
+    }
+  }
   render() {
     const { data, options } = this.state
 
     return (
-      <div class="rolestree">
+      <div className="rolestree">
         <Dialog
           title="分配权限"
           size="tiny"
