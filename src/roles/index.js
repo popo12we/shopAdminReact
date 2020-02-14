@@ -1,5 +1,5 @@
 import React from 'react'
-import { Breadcrumb, Table, Button, Tag } from 'element-react'
+import { Breadcrumb, Table, Button, Tag, Tree, Dialog } from 'element-react'
 import styles from './index.module.scss'
 import { API } from '../utils'
 // 面包屑
@@ -99,7 +99,7 @@ class RolesTable extends React.Component {
         },
         {
           label: '操作',
-          render: data => {
+          render: () => {
             return (
               <span>
                 <Button plain icon="delete" type="warning" size="mini"></Button>
@@ -111,58 +111,129 @@ class RolesTable extends React.Component {
           }
         }
       ],
-      data: [
-        {
-          id: '12987122',
-          name: '好滋好味鸡蛋仔',
-          category: '江浙小吃、小吃零食',
-          desc: '荷兰优质淡奶，奶香浓而不腻',
-          address: '上海市普陀区真北路',
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        },
-        {
-          id: '12987123',
-          name: '好滋好味鸡蛋仔',
-          category: '江浙小吃、小吃零食',
-          desc: '荷兰优质淡奶，奶香浓而不腻',
-          address: '上海市普陀区真北路',
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        },
-        {
-          id: '12987125',
-          name: '好滋好味鸡蛋仔',
-          category: '江浙小吃、小吃零食',
-          desc: '荷兰优质淡奶，奶香浓而不腻',
-          address: '上海市普陀区真北路',
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        },
-        {
-          id: '12987126',
-          name: '好滋好味鸡蛋仔',
-          category: '江浙小吃、小吃零食',
-          desc: '荷兰优质淡奶，奶香浓而不腻',
-          address: '上海市普陀区真北路',
-          shop: '王小虎夫妻店',
-          shopId: '10333'
-        }
-      ]
+      data: []
     }
   }
 
   render() {
     return (
-      <Table
-        style={{ width: '100%' }}
-        columns={this.state.columns}
-        data={this.state.data}
-        border={false}
-        onCurrentChange={item => {
-          console.log(item)
-        }}
-      />
+      <div class="rolesTable">
+        <Table
+          style={{ width: '100%' }}
+          columns={this.state.columns}
+          data={this.state.data}
+          border={false}
+          onCurrentChange={item => {
+            console.log(item)
+          }}
+        />
+        <RolesTree></RolesTree>
+      </div>
+    )
+  }
+}
+
+// 树状图
+class RolesTree extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      dialogVisible: true,
+      data: [
+        {
+          id: 1,
+          label: '一级 1',
+          children: [
+            {
+              id: 4,
+              label: '二级 1-1',
+              children: [
+                {
+                  id: 9,
+                  label: '三级 1-1-1'
+                },
+                {
+                  id: 10,
+                  label: '三级 1-1-2'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          id: 2,
+          label: '一级 2',
+          children: [
+            {
+              id: 5,
+              label: '二级 2-1'
+            },
+            {
+              id: 6,
+              label: '二级 2-2'
+            }
+          ]
+        },
+        {
+          id: 3,
+          label: '一级 3',
+          children: [
+            {
+              id: 7,
+              label: '二级 3-1'
+            },
+            {
+              id: 8,
+              label: '二级 3-2'
+            }
+          ]
+        }
+      ],
+      options: {
+        children: 'children',
+        label: 'label'
+      }
+    }
+  }
+
+  render() {
+    const { data, options } = this.state
+
+    return (
+      <div class="rolestree">
+        <Dialog
+          title="分配权限"
+          size="tiny"
+          visible={this.state.dialogVisible}
+          onCancel={() => this.setState({ dialogVisible: false })}
+          lockScroll={false}
+        >
+          <Dialog.Body>
+            <Tree
+              ref={e => (this.tree = e)}
+              data={data}
+              options={options}
+              isShowCheckbox={true}
+              highlightCurrent={true}
+              nodeKey="id"
+              defaultExpandedKeys={[2, 3]}
+              defaultCheckedKeys={[5]}
+            />
+          </Dialog.Body>
+          <Dialog.Footer className="dialog-footer">
+            <Button onClick={() => this.setState({ dialogVisible: false })}>
+              取消
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => this.setState({ dialogVisible: false })}
+            >
+              确定
+            </Button>
+          </Dialog.Footer>
+        </Dialog>
+      </div>
     )
   }
 }
