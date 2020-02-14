@@ -16,7 +16,8 @@ class BoardList extends React.Component {
 // 表格
 class RolesTable extends React.Component {
   state = {
-    show: false
+    show: false,
+    oneRolesData: []
   }
   componentDidMount() {
     this.getRolesTableData()
@@ -32,9 +33,10 @@ class RolesTable extends React.Component {
   }
 
   // 点击分配权限显示对话框
-  showDialog = () => {
+  showDialog(data) {
     this.setState({
-      show: true
+      show: true,
+      oneRolesData: data
     })
   }
 
@@ -48,7 +50,6 @@ class RolesTable extends React.Component {
         {
           type: 'expand',
           expandPannel: function(data) {
-            console.log(data)
             return (
               <div className="expandpannel">
                 <div className={styles.expandpannerFirst}>
@@ -110,11 +111,15 @@ class RolesTable extends React.Component {
         },
         {
           label: '操作',
-          render: () => {
+          render: data => {
             return (
               <span>
                 <Button plain icon="delete" type="warning" size="mini"></Button>
-                <Button type="success" size="mini" onClick={this.showDialog}>
+                <Button
+                  type="success"
+                  size="mini"
+                  onClick={this.showDialog.bind(this, data)}
+                >
                   分配权限
                 </Button>
               </span>
@@ -135,7 +140,12 @@ class RolesTable extends React.Component {
           data={this.state.data}
           border={false}
         />
-        <RolesTree show={this.state.show}></RolesTree>
+        {this.state.show ? (
+          <RolesTree
+            show={this.state.show}
+            oneRolesData={this.state.oneRolesData}
+          ></RolesTree>
+        ) : null}
       </div>
     )
   }
@@ -145,7 +155,8 @@ class RolesTable extends React.Component {
 class RolesTree extends React.Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
-      dialogVisible: nextProps.show
+      dialogVisible: nextProps.show,
+      oneRolesData: nextProps.oneRolesData
     })
   }
   componentDidMount() {
@@ -156,6 +167,7 @@ class RolesTree extends React.Component {
 
     this.state = {
       dialogVisible: this.props.show,
+      oneRolesData: this.props.oneRolesData,
       data: [],
       options: {
         children: 'children',
@@ -177,11 +189,23 @@ class RolesTree extends React.Component {
           })
         })
       })
-      this.setState({
-        data: data
-      })
+      this.setState(
+        {
+          data: data
+        },
+        () => {
+          console.log(12345)
+          this.setCheckedNodes()
+        }
+      )
     }
   }
+  // 返显权限数据
+  setCheckedNodes() {
+    console.log(this.props)
+    this.tree.setCheckedKeys([101])
+  }
+
   render() {
     const { data, options } = this.state
 
@@ -202,8 +226,8 @@ class RolesTree extends React.Component {
               isShowCheckbox={true}
               highlightCurrent={true}
               nodeKey="id"
-              defaultExpandedKeys={[2, 3]}
-              defaultCheckedKeys={[5]}
+              defaultExpandedKeys={[101]}
+              defaultCheckedKeys={[101]}
             />
           </Dialog.Body>
           <Dialog.Footer className="dialog-footer">
