@@ -150,6 +150,7 @@ class RolesTable extends React.Component {
             show={this.state.show}
             oneRolesData={this.state.oneRolesData}
             closeDialog={this.closeDialog}
+            getRolesTableData={this.getRolesTableData}
           ></RolesTree>
         ) : null}
       </div>
@@ -164,7 +165,6 @@ class RolesTree extends React.Component {
       dialogVisible: nextProps.show,
       oneRolesData: nextProps.oneRolesData
     })
-    console.log(nextProps)
   }
 
   componentDidMount() {
@@ -210,14 +210,11 @@ class RolesTree extends React.Component {
 
   // 返显权限数据
   setCheckedNodes() {
-    console.log(this.props)
     let arr = []
     this.props.oneRolesData.children.forEach(item1 => {
       if (item1.id) {
-        arr.push(item1.id)
         if (item1.children) {
           item1.children.forEach(item2 => {
-            arr.push(item2.id)
             if (item2.children) {
               item2.children.forEach(item3 => {
                 arr.push(item3.id)
@@ -227,8 +224,23 @@ class RolesTree extends React.Component {
         }
       }
     })
-    console.log(arr)
     this.tree.setCheckedKeys(arr)
+  }
+
+  // 分配全选
+  async setAssginJurisdiction(role) {
+    let ridStr = this.tree.getCheckedKeys().join(',')
+    console.log(ridStr)
+    let { meta } = await API.post(`roles/${role.id}/rights`, {
+      rids: ridStr
+    })
+    if (meta.status === 200) {
+      this.setState({
+        dialogVisible: false
+      })
+      this.props.getRolesTableData()
+      this.props.closeDialog()
+    }
   }
 
   render() {
@@ -271,9 +283,12 @@ class RolesTree extends React.Component {
             </Button>
             <Button
               type="primary"
-              onClick={() => this.setState({ dialogVisible: false })}
+              onClick={this.setAssginJurisdiction.bind(
+                this,
+                this.state.oneRolesData
+              )}
             >
-              确定
+              分配
             </Button>
           </Dialog.Footer>
         </Dialog>
