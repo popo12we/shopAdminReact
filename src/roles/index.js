@@ -39,7 +39,12 @@ class RolesTable extends React.Component {
       oneRolesData: data
     })
   }
-
+  // 关闭对话框
+  closeDialog = () => {
+    this.setState({
+      show: false
+    })
+  }
   constructor(props) {
     super(props)
     this.state = {
@@ -144,6 +149,7 @@ class RolesTable extends React.Component {
           <RolesTree
             show={this.state.show}
             oneRolesData={this.state.oneRolesData}
+            closeDialog={this.closeDialog}
           ></RolesTree>
         ) : null}
       </div>
@@ -158,7 +164,9 @@ class RolesTree extends React.Component {
       dialogVisible: nextProps.show,
       oneRolesData: nextProps.oneRolesData
     })
+    console.log(nextProps)
   }
+
   componentDidMount() {
     this.getAssginJurisdictionData()
   }
@@ -194,16 +202,33 @@ class RolesTree extends React.Component {
           data: data
         },
         () => {
-          console.log(12345)
           this.setCheckedNodes()
         }
       )
     }
   }
+
   // 返显权限数据
   setCheckedNodes() {
     console.log(this.props)
-    this.tree.setCheckedKeys([101])
+    let arr = []
+    this.props.oneRolesData.children.forEach(item1 => {
+      if (item1.id) {
+        arr.push(item1.id)
+        if (item1.children) {
+          item1.children.forEach(item2 => {
+            arr.push(item2.id)
+            if (item2.children) {
+              item2.children.forEach(item3 => {
+                arr.push(item3.id)
+              })
+            }
+          })
+        }
+      }
+    })
+    console.log(arr)
+    this.tree.setCheckedKeys(arr)
   }
 
   render() {
@@ -215,7 +240,12 @@ class RolesTree extends React.Component {
           title="分配权限"
           size="tiny"
           visible={this.state.dialogVisible}
-          onCancel={() => this.setState({ dialogVisible: false })}
+          onCancel={
+            (() => this.setState({ dialogVisible: false }),
+            () => {
+              this.props.closeDialog()
+            })
+          }
           lockScroll={false}
         >
           <Dialog.Body>
@@ -226,12 +256,17 @@ class RolesTree extends React.Component {
               isShowCheckbox={true}
               highlightCurrent={true}
               nodeKey="id"
-              defaultExpandedKeys={[101]}
-              defaultCheckedKeys={[101]}
+              defaultExpandAll={true}
             />
           </Dialog.Body>
           <Dialog.Footer className="dialog-footer">
-            <Button onClick={() => this.setState({ dialogVisible: false })}>
+            <Button
+              onClick={() =>
+                this.setState({ dialogVisible: false }, () => {
+                  this.props.closeDialog()
+                })
+              }
+            >
               取消
             </Button>
             <Button
