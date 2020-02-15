@@ -3,6 +3,7 @@ import { Layout, Menu } from 'element-react'
 import { Route, Link } from 'react-router-dom'
 import User from '../user'
 import Roles from '../roles'
+import Categories from '../categories'
 import styles from './index.module.scss'
 import './index.css'
 // 顶部
@@ -75,7 +76,9 @@ class LeftNav extends React.Component {
             >
               <Menu.Item index="3-1">商品列表</Menu.Item>
               <Menu.Item index="3-2">分类参数</Menu.Item>
-              <Menu.Item index="3-3">用户列表</Menu.Item>
+              <Link to="/home/categories">
+                <Menu.Item index="3-3">商品分类</Menu.Item>
+              </Link>
             </Menu.SubMenu>
           </Menu>
           <Menu
@@ -130,6 +133,7 @@ export default class Home extends React.Component {
         <LeftNav></LeftNav>
         <Route path="/home/user" component={User} class="content" />
         <Route path="/home/roles" component={Roles} class="content" />
+        <Route path="/home/categories" component={Categories} class="content" />
       </div>
     )
   }
