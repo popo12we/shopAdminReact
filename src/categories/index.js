@@ -2,6 +2,7 @@ import React from 'react'
 import styles from './index.module.scss'
 import { Table, Button } from 'element-react'
 import { API } from '../utils'
+import './index.css'
 class CategoriesTable extends React.Component {
   constructor(props) {
     super(props)
@@ -10,8 +11,16 @@ class CategoriesTable extends React.Component {
       columns: [
         {
           type: 'expand',
-          expandPannel: function(data) {
-            return <div>111</div>
+          expandPannel: data => {
+            console.log(this.state)
+            return (
+              <Table
+                style={{ width: '100%' }}
+                columns={this.state.columns}
+                data={data.children}
+                border={false}
+              ></Table>
+            )
           }
         },
         {
@@ -73,6 +82,7 @@ class CategoriesTable extends React.Component {
   render() {
     return (
       <Table
+        rowKey="cat_id"
         style={{ width: '100%' }}
         columns={this.state.columns}
         data={this.state.tabledata}
