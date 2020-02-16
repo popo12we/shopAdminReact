@@ -66,8 +66,9 @@ class Elform extends React.Component {
           }
         )
         if (res.data.meta.status === 200) {
-          this.props.history.push('/home')
           localStorage.setItem('token', res.data.data.token)
+          console.log(this.props)
+          this.props.history.push('/home')
         }
       } else {
         return false
