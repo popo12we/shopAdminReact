@@ -8,3 +8,6 @@
 .el-menu-item {
   color: #fff !important;
 }
+.is-active {
+  color: rgb(255, 208, 75) !important;
+}

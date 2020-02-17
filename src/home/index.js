@@ -1,9 +1,10 @@
 import React from 'react'
 import { Layout, Menu } from 'element-react'
-import { Route, Link } from 'react-router-dom'
+import { Route, NavLink } from 'react-router-dom'
 import User from '../user'
 import Roles from '../roles'
 import Categories from '../categories'
+import Goods from '../goods'
 import styles from './index.module.scss'
 import './index.css'
 // 顶部
@@ -33,9 +34,9 @@ class LeftNav extends React.Component {
                 </span>
               }
             >
-              <Link to="/home/user">
+              <NavLink to="/home/user">
                 <Menu.Item index="1-1">用户列表</Menu.Item>
-              </Link>
+              </NavLink>
             </Menu.SubMenu>
           </Menu>
           <Menu
@@ -53,9 +54,9 @@ class LeftNav extends React.Component {
                 </span>
               }
             >
-              <Link to="/home/roles">
+              <NavLink to="/home/roles">
                 <Menu.Item index="2-1">角色列表</Menu.Item>
-              </Link>
+              </NavLink>
               <Menu.Item index="2-2">权限列表</Menu.Item>
             </Menu.SubMenu>
           </Menu>
@@ -74,11 +75,13 @@ class LeftNav extends React.Component {
                 </span>
               }
             >
-              <Menu.Item index="3-1">商品列表</Menu.Item>
+              <NavLink to="/home/goods">
+                <Menu.Item index="3-1">商品列表</Menu.Item>
+              </NavLink>
               <Menu.Item index="3-2">分类参数</Menu.Item>
-              <Link to="/home/categories">
+              <NavLink to="/home/categories">
                 <Menu.Item index="3-3">商品分类</Menu.Item>
-              </Link>
+              </NavLink>
             </Menu.SubMenu>
           </Menu>
           <Menu
@@ -106,14 +109,14 @@ class LeftNav extends React.Component {
             theme="dark"
           >
             <Menu.SubMenu
-              index="1"
+              index="5"
               title={
                 <span>
                   <i className="el-icon-message"></i>用户管理
                 </span>
               }
             >
-              <Menu.Item index="1-1">用户列表</Menu.Item>
+              <Menu.Item index="5-1">用户列表</Menu.Item>
             </Menu.SubMenu>
           </Menu>
         </Layout.Col>
@@ -133,6 +136,7 @@ export default class Home extends React.Component {
         <LeftNav></LeftNav>
         <Route path="/home/user" component={User} class="content" />
         <Route path="/home/roles" component={Roles} class="content" />
+        <Route path="/home/goods" component={Goods} class="content" />
         <Route path="/home/categories" component={Categories} class="content" />
       </div>
     )
