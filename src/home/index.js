@@ -5,6 +5,7 @@ import User from '../user'
 import Roles from '../roles'
 import Categories from '../categories'
 import Goods from '../goods'
+import GoodsAdd from '../goodsadd'
 import styles from './index.module.scss'
 import './index.css'
 // 顶部
@@ -138,6 +139,7 @@ export default class Home extends React.Component {
         <Route path="/home/roles" component={Roles} class="content" />
         <Route path="/home/goods" component={Goods} class="content" />
         <Route path="/home/categories" component={Categories} class="content" />
+        <Route path="/home/goodsadd" component={GoodsAdd} class="content" />
       </div>
     )
   }

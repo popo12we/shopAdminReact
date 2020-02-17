@@ -2,6 +2,7 @@ import React from 'react'
 import styles from './index.module.scss'
 import { API } from '../utils'
 import { Table, Button } from 'element-react'
+import './index.css'
 class GoodsTable extends React.Component {
   constructor(props) {
     super(props)
@@ -12,7 +13,8 @@ class GoodsTable extends React.Component {
       total: 0,
       columns: [
         {
-          type: 'index'
+          type: 'index',
+          width: 590
         },
         {
           label: '商品名称',
@@ -35,6 +37,7 @@ class GoodsTable extends React.Component {
   componentDidMount() {
     this.getTableData()
   }
+  // 拿到表格数据
   async getTableData() {
     let { data, meta } = await API.get('goods', {
       params: {
@@ -50,12 +53,10 @@ class GoodsTable extends React.Component {
       })
     }
   }
+
   render() {
     return (
       <div className="goodstable">
-        <Button type="primary" plain>
-          添加商品
-        </Button>
         <Table
           style={{ width: '100%' }}
           columns={this.state.columns}
@@ -70,8 +71,16 @@ export default class Goods extends React.Component {
   render() {
     return (
       <div className={styles.goods}>
+        <Button type="primary" plain onClick={this.gotoGoodsAdd}>
+          添加商品
+        </Button>
         <GoodsTable></GoodsTable>
       </div>
     )
+  }
+  // 点击按钮跳转到goodsadd
+  gotoGoodsAdd = () => {
+    console.log(this)
+    this.props.history.push('/home/goodsadd')
   }
 }
