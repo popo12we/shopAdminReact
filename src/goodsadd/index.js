@@ -1,4 +1,5 @@
 import React from 'react'
+import { withRouter } from 'react-router-dom'
 import styles from './index.module.scss'
 import './index.css'
 import {
@@ -8,7 +9,8 @@ import {
   Cascader,
   Button,
   Input,
-  Radio
+  Radio,
+  Upload
 } from 'element-react'
 import { API } from '../utils'
 // 进度条
@@ -29,7 +31,7 @@ class AddStep extends React.Component {
           <Steps.Step title="步骤 2" description="商品图片"></Steps.Step>
           <Steps.Step title="步骤 3" description="商品内容"></Steps.Step>
         </Steps>
-        <TabCard getActiveName={this.getActiveName}></TabCard>
+        <TabCard getActiveName={this.getActiveName} go={this.props}></TabCard>
       </div>
     )
   }
@@ -38,12 +40,18 @@ class TabCard extends React.Component {
   state = {
     activeName: '0',
     form: {
-      name: '',
-      price: '',
-      number: '',
-      weight: '',
-      is_promote: 1
+      goods_name: '',
+      goods_price: '',
+      goods_number: '',
+      goods_weight: '',
+      is_promote: 1,
+      goods_cat: '',
+      pic: []
     },
+    headers: {
+      Authorization: localStorage.getItem('token')
+    },
+
     //级联数据
     options: [],
     //级联选中数据
@@ -59,33 +67,29 @@ class TabCard extends React.Component {
           onTabClick={this.handleTab}
         >
           <Tabs.Pane label="基本信息" name="0">
-            <Form
-              model={this.state.form}
-              labelWidth="80"
-              onSubmit={this.onSubmit.bind(this)}
-            >
+            <Form model={this.state.form} labelWidth="80">
               <Form.Item label="商品名称">
                 <Input
-                  value={this.state.form.name}
-                  onChange={this.onChange.bind(this, 'name')}
+                  value={this.state.form.goods_name}
+                  onChange={this.onChange.bind(this, 'goods_name')}
                 ></Input>
               </Form.Item>
               <Form.Item label="商品价格">
                 <Input
-                  value={this.state.form.price}
-                  onChange={this.onChange.bind(this, 'price')}
+                  value={this.state.form.goods_price}
+                  onChange={this.onChange.bind(this, 'goods_price')}
                 ></Input>
               </Form.Item>
               <Form.Item label="商品重量">
                 <Input
-                  value={this.state.form.weight}
-                  onChange={this.onChange.bind(this, 'weight')}
+                  value={this.state.form.goods_weight}
+                  onChange={this.onChange.bind(this, 'goods_weight')}
                 ></Input>
               </Form.Item>
               <Form.Item label="商品数量">
                 <Input
-                  value={this.state.form.number}
-                  onChange={this.onChange.bind(this, 'number')}
+                  value={this.state.form.goods_number}
+                  onChange={this.onChange.bind(this, 'goods_number')}
                 ></Input>
               </Form.Item>
               <Form.Item label="商品分类">
@@ -93,22 +97,22 @@ class TabCard extends React.Component {
                   options={this.state.options}
                   expandTrigger="hover"
                   value={this.state.selectedOptions2}
-                  onChange={this.handleChange.bind(this, 'selectedOptions2')}
+                  onChange={this.onChange.bind(this, 'goods_cat')}
                 />
               </Form.Item>
               <Form.Item label="是否促销">
                 <div>
                   <Radio
                     value="1"
-                    checked={this.state.is_promote === 1}
-                    onChange={this.onChange.bind(this)}
+                    checked={this.state.is_promote == 1}
+                    onChange={this.onChange.bind(this, 'is_promote')}
                   >
                     是
                   </Radio>
                   <Radio
                     value="2"
-                    checked={this.state.is_promote === 2}
-                    onChange={this.onChange.bind(this)}
+                    checked={this.state.is_promote == 2}
+                    onChange={this.onChange.bind(this, 'is_promote')}
                   >
                     否
                   </Radio>
@@ -122,10 +126,21 @@ class TabCard extends React.Component {
             </Form>
           </Tabs.Pane>
           <Tabs.Pane label="商品图片" name="1">
-            配置管理
+            <div>
+              <Upload
+                action="http://localhost:8888/api/private/v1/upload"
+                listType="picture-card"
+                headers={this.state.headers}
+                onSuccess={this.handlePictureCardPreview.bind(this)}
+              >
+                <i className="el-icon-plus"></i>
+              </Upload>
+            </div>
           </Tabs.Pane>
           <Tabs.Pane label="商品内容" name="2">
-            角色管理
+            <Button type="primary" nativeType="submit" onClick={this.sumbit}>
+              提交
+            </Button>
           </Tabs.Pane>
         </Tabs>
       </div>
@@ -158,7 +173,7 @@ class TabCard extends React.Component {
           })
         }
       })
-      console.log(data)
+
       this.setState({
         options: data
       })
@@ -168,29 +183,40 @@ class TabCard extends React.Component {
   handleTab = e => {
     this.props.getActiveName(e.key[1] * 1 + 1)
   }
-  onSubmit(e) {
-    e.preventDefault()
-  }
+
   //表单input
   onChange(key, value) {
+    console.log(key, value)
     this.state.form[key] = value
     this.forceUpdate()
-    this.setState({
-      is_promote: key
-    })
+    if (typeof value === 'object') {
+      this.state.selectedOptions2 = value
+      this.state.form['goods_cat'] = value.join(',')
+    }
   }
-  //级联
-  handleChange(key, value) {
-    this.setState({ [key]: value })
-    console.log(value)
+
+  //图片上传
+  handlePictureCardPreview(file) {
+    this.state.form.pic = [...this.state.form.pic, file.data.tmp_path]
+  }
+  sumbit = async () => {
+    let { data, meta } = await API.post('goods', { ...this.state.form })
+    if (meta.status === 201) {
+      this.setState({
+        pic: []
+      })
+      console.log(this)
+      this.props.go.props.history.push('/home/goods')
+    }
   }
 }
-export default class GoodsAdd extends React.Component {
+class GoodsAdd extends React.Component {
   render() {
     return (
       <div className={styles.goodsadd}>
-        <AddStep></AddStep>
+        <AddStep props={this.props}></AddStep>
       </div>
     )
   }
 }
+export default withRouter(GoodsAdd)
